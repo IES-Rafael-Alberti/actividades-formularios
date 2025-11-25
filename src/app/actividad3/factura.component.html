@@ -1,0 +1,70 @@
+<main>
+  <h2>Generador de Facturas</h2>
+  <form [formGroup]="facturaForm" (ngSubmit)="onSubmit()">
+    <label>Número de Factura:</label><br>
+    <input type="text" formControlName="numeroFactura" placeholder="FAC-XXXXXX" />
+    <section *ngIf="facturaForm.get('numeroFactura')?.touched && facturaForm.get('numeroFactura')?.invalid" style="color:red;">
+      <article *ngIf="facturaForm.get('numeroFactura')?.errors?.['required']">Requerido</article>
+      <article *ngIf="facturaForm.get('numeroFactura')?.errors?.['formatoFactura']">Formato: FAC-XXXXXX (6 dígitos)</article>
+    </section>
+    <br>
+    <label>Fecha:</label>
+    <br>
+    <input type="date" formControlName="fecha" />
+    <section *ngIf="facturaForm.get('fecha')?.touched && facturaForm.get('fecha')?.invalid" style="color:red;">
+      <article *ngIf="facturaForm.get('fecha')?.errors?.['required']">Requerido</article>
+    </section>
+    <br>
+    <label>Cliente:</label>
+    <br>
+    <input type="text" formControlName="cliente" />
+    <section *ngIf="facturaForm.get('cliente')?.touched && facturaForm.get('cliente')?.invalid" style="color:red;">
+      <article *ngIf="facturaForm.get('cliente')?.errors?.['required']">Requerido</article>
+      <article *ngIf="facturaForm.get('cliente')?.errors?.['minlength']">Mínimo 3 caracteres</article>
+    </section>
+    <br>
+    <h3>Detalles de Factura</h3>
+    <section formArrayName="detalles">
+      <article *ngFor="let detalle of detalles.controls; let i=index" [formGroupName]="i" style="margin-bottom:15px; border:1px solid #ccc; padding:10px;">
+        <label>Producto:</label>
+        <br>
+        <input type="text" formControlName="producto" />
+        <section *ngIf="detalle.get('producto')?.touched && detalle.get('producto')?.invalid" style="color:red;">
+          <article *ngIf="detalle.get('producto')?.errors?.['required']">Requerido</article>
+        </section>
+        <br>
+        <label>Cantidad:</label><br>
+        <input type="number" formControlName="cantidad" />
+        <section *ngIf="detalle.get('cantidad')?.touched && detalle.get('cantidad')?.invalid" style="color:red;">
+          <article *ngIf="detalle.get('cantidad')?.errors?.['required']">Requerido</article>
+          <article *ngIf="detalle.get('cantidad')?.errors?.['min']">Mínimo 1</article>
+        </section>
+        <br>
+        <label>Precio Unitario (€):</label>
+        <br>
+        <input type="number" step="0.01" formControlName="precioUnitario" />
+        <section *ngIf="detalle.get('precioUnitario')?.touched && detalle.get('precioUnitario')?.invalid" style="color:red;">
+          <article *ngIf="detalle.get('precioUnitario')?.errors?.['required']">Requerido</article>
+          <article *ngIf="detalle.get('precioUnitario')?.errors?.['min']">Debe ser mayor a 0</article>
+        </section>
+        <br>
+        <label>Descuento (%):</label>
+        <br>
+        <input type="number" formControlName="descuento" />
+        <section *ngIf="detalle.get('descuento')?.touched && detalle.get('descuento')?.invalid" style="color:red;">
+          <article *ngIf="detalle.get('descuento')?.errors?.['min']">Mínimo 0%</article>
+          <article *ngIf="detalle.get('descuento')?.errors?.['max']">Máximo 100%</article>
+        </section>
+        <br>
+        <button type="button" (click)="eliminarDetalle(i)">Eliminar</button>
+      </article>
+    </section>
+    <button type="button" (click)="agregarDetalle()">+ Agregar Detalle</button>
+    <br>
+    <br>
+    <p>Subtotal: {{ calcularSubtotal() | currency:'EUR':'symbol':'1.2-2' }}</p>
+    <p>IVA (21%): {{ calcularIVA() | currency:'EUR':'symbol':'1.2-2' }}</p>
+    <p>Total: {{ calcularTotal() | currency:'EUR':'symbol':'1.2-2' }}</p>
+    <button type="submit" [disabled]="facturaForm.invalid || detalles.length === 0">Guardar Factura</button>
+  </form>
+</main>

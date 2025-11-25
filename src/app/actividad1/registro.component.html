@@ -1,0 +1,44 @@
+<main>
+  <h2>Formulario de Registro</h2>
+  <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <label>Nombre Completo:</label>
+    <br>
+    <input type="text" name="nombre" [(ngModel)]="usuario.nombre" required minlength="3" #nombre="ngModel"/>
+    <section *ngIf="nombre.touched && nombre.invalid" style="color:red;">
+      <article *ngIf="nombre.errors?.['required']">El nombre es requerido</article>
+      <article *ngIf="nombre.errors?.['minlength']">Mínimo 3 caracteres</article>
+    </section>
+    <br>
+    <label>Email:</label>
+    <br>
+    <input type="email" name="email" [(ngModel)]="usuario.email" required email #email="ngModel"/>
+    <section *ngIf="email.touched && email.invalid" style="color:red;">
+      <article *ngIf="email.errors?.['required']">El email es requerido</article>
+      <article *ngIf="email.errors?.['email']">Formato de email inválido</article>
+    </section>
+    <br>
+    <label>Contraseña:</label>
+    <br>
+    <input type="password" name="password" [(ngModel)]="usuario.password" required minlength="6" #password="ngModel"/>
+    <section *ngIf="password.touched && password.invalid" style="color:red;">
+      <article *ngIf="password.errors?.['required']">La contraseña es requerida</article>
+      <div *ngIf="password.errors?.['minlength']">Mínimo 6 caracteres</div>
+    </section>
+    <br>
+    <label>Confirmar Contraseña:</label>
+    <br>
+    <input type="password" name="confirmPassword" [(ngModel)]="usuario.confirmPassword" required #confirmPassword="ngModel"/>
+    <section *ngIf="confirmPassword.touched && confirmPassword.invalid" style="color:red;">
+      <article *ngIf="confirmPassword.errors?.['required']">Debe confirmar la contraseña</article>
+    </section>
+    <p *ngIf="password.touched && confirmPassword.touched && usuario.password !== usuario.confirmPassword" style="color:red;">Las contraseñas no coinciden</p>
+    <br>
+    <button type="submit" [disabled]="form.invalid">Registrarse</button>
+  </form>
+  <p style="color:green; font-weight:bold;">{{ mensajeExito }}</p>
+  <hr>
+  <h3>Usuarios Registrados</h3>
+  <ul>
+    <li *ngFor="let u of usuariosRegistrados">{{ u.nombre }} – {{ u.email }}</li>
+  </ul>
+</main>

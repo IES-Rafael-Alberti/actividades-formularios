@@ -1,0 +1,42 @@
+<main>
+  <h2>Registro Avanzado con Validación Asincrónica</h2>
+  <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+    <label>Username:</label>
+    <br>
+    <input type="text" formControlName="username" />
+    <span *ngIf="mostrarCargando('username')" style="color:blue;">Verificando...</span>
+    <section *ngIf="validarCampo('username')" style="color:red;">
+      <article *ngIf="registroForm.get('username')?.errors?.['required']">Requerido</article>
+      <article *ngIf="registroForm.get('username')?.errors?.['minlength']">Mínimo 3 caracteres</article>
+      <article *ngIf="registroForm.get('username')?.errors?.['usernameNoDisponible']">Username no disponible (reservado)</article>
+    </section>
+    <br>
+    <label>Email:</label>
+    <br>
+    <input type="email" formControlName="email" />
+    <span *ngIf="mostrarCargando('email')" style="color:blue;">Validando disponibilidad del email...</span>
+    <section *ngIf="validarCampo('email')" style="color:red;">
+      <article *ngIf="registroForm.get('email')?.errors?.['required']">Requerido</article>
+      <article *ngIf="registroForm.get('email')?.errors?.['email']">Email inválido</article>
+      <article *ngIf="registroForm.get('email')?.errors?.['emailRegistrado']">Este email ya está registrado</article>
+    </section>
+    <br>
+    <label>Contraseña:</label>
+    <br>
+    <input type="password" formControlName="password" />
+    <section *ngIf="validarCampo('password')" style="color:red;">
+      <article *ngIf="registroForm.get('password')?.errors?.['required']">Requerida</article>
+      <article *ngIf="registroForm.get('password')?.errors?.['minlength']">Mínimo 8 caracteres</article>
+    </section>
+    <br>
+    <label>
+      <input type="checkbox" formControlName="terminos" /> Acepto los términos y condiciones
+    </label>
+    <p *ngIf="validarCampo('terminos')" style="color:red;">Debes aceptar los términos</p>
+    <br>
+    <button type="submit" [disabled]="registroForm.invalid || enviando">
+      {{ enviando ? 'Registrando...' : 'Crear Cuenta' }}
+    </button>
+  </form>
+  <p *ngIf="enviando" style="color:blue; font-weight:bold;">Validando información...</p>
+</main>
